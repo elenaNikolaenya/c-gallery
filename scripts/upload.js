@@ -22,7 +22,7 @@ const alertFail = document.querySelector('#alert-fail');
 const MAX_CHAR_NUMBER = 2000;
 const TIMEOUT = 2000;
 const URL_POST_PUBLISH = "https://c-gallery.polinashneider.space/api/v1/posts/";
-const TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1ODAyMDYxLCJpYXQiOjE2NzA5NjM2NjEsImp0aSI6IjdkNzQ5MDUxMjZkNjQwZTdiMGNkOTNjMTFkMGUxZGY4IiwidXNlcl9pZCI6MjV9.UtYKamvCmV187J_pov0OYS6cIIDZSJY60gB2K3ncPS0;
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1ODAyMDYxLCJpYXQiOjE2NzA5NjM2NjEsImp0aSI6IjdkNzQ5MDUxMjZkNjQwZTdiMGNkOTNjMTFkMGUxZGY4IiwidXNlcl9pZCI6MjV9.UtYKamvCmV187J_pov0OYS6cIIDZSJY60gB2K3ncPS0";
 // step 1
 addPhotoBtn.addEventListener('click', openAddPostModal);
 addFirstPostBtn.addEventListener('click', openAddPostModal);
