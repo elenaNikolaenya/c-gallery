@@ -3,7 +3,6 @@
 :root {
   --primary: #f09476;
   --hover: #e98564;
-  --error: #eb8282;
   --disabled: #ebe1da;
   --black: #26201f;
   --white: #ffffff;
@@ -293,6 +292,11 @@ button:hover {
   margin: 0 0 35px 0;
 }
 
+.add-post-modal__text--red {
+  font-size: 28px;
+  color: var(--error);
+}
+
 .add-post-modal__upload-photo {
   height: 49px;
   width: 161px;
@@ -311,6 +315,10 @@ button:hover {
   border-color: var(--hover);
 }
 
+.add-post-modal__step-1.highlight {
+  background-color: var(--cream-white);
+}
+
 .modal__content {
   padding: 0 60px;
 }
@@ -327,6 +335,10 @@ input {
   font-size: 14px;
 }
 
+textarea.error {
+  outline-color: var(--error);
+}
+
 ::placeholder {
   color: var(--light-border);
 }
@@ -341,13 +353,16 @@ input {
 .add-post-modal__post-text {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 5px;
 }
 
 .text-counter {
   font-size: 12px;
   color: var(--text-light);
+}
+
+.text-counter.error {  
+  color: var(--error);
 }
 
 .modal__footer {
@@ -360,6 +375,12 @@ input {
   font-size: 14px;
   margin-left: auto;
   display: block;
+}
+
+:disabled {
+  background-color: var(--disabled);
+  border-color: var(--disabled);
+  pointer-events: none;
 }
 
 .edit-bio-modal {
@@ -378,11 +399,13 @@ input {
 }
 
 .required-field,
-.edit-bio-modal__bio-feedback {
+.edit-bio-modal__bio-feedback,
+.add-post-modal__text-feedback {
   font-size: 12px;
 }
 
-.edit-bio-modal__bio-feedback {
+.edit-bio-modal__bio-feedback,
+.add-post-modal__text-feedback {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -396,12 +419,14 @@ input {
 }
 
 .edit-bio-modal .required-field,
-.edit-bio-modal__bio-feedback {
+.edit-bio-modal__bio-feedback,
+.add-post-modal__text-feedback {
   margin-top: 5px;
 }
 
 .edit-bio-modal .required-field,
-.edit-bio-modal .max-capacity {
+.edit-bio-modal .max-capacity,
+.add-post-modal .max-capacity {
   color: var(--error);
 }
 
@@ -552,6 +577,7 @@ input {
   display: flex;
   align-items: center;
   position: absolute;
+  z-index: 11;
   gap: 60px;
   width: 360px;
   height: 120px;

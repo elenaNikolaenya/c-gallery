@@ -206,8 +206,8 @@
             <div>
               <label for="file-upload" class="add-post-modal__upload-photo">
                 Добавить фото
-              </label>
-              <input id="file-upload" type="file"></button>
+              </label>              
+              <input id="file-upload" type="file" accept="image/*">
             </div>
           </div>
           <div class="add-post-modal__step-2 hidden">
@@ -225,7 +225,13 @@
                   cols="30"
                   rows="10"
                 ></textarea>
-                <div class="text-counter">0/2000</div>
+                <div class="add-post-modal__text-feedback">
+                  <div id="text-notification" class="max-capacity v-hidden">
+                  Максимальное количество символов 2000
+                  </div>
+                  <div class="text-counter">0/2000</div>
+                </div>
+                
               </div>
               <textarea
                 name="post-hashtags"
@@ -363,20 +369,20 @@
       <!-- Preview post modal end -->
     </div>
     <!-- Alert notifications start -->
-    <template id="alert-success">
+    <div id="alert-success" class="hidden">
       <div class="alert alert--success">
         <div class="alert__ellipsis"></div>
         <div class="alert__icon">
           <i class="fa fa-check fa-3x"></i>
         </div>
         <div class="alert__text">
-          <h4 class="alert__title">Данные сохранены!</h4>
-          <p class="alert__info">Мы сохранили ваши данные</p>
+          <h4 class="alert__title">Пост добавлен!</h4>
+          <p class="alert__info">Мы сохранили все данные</p>
         </div>
       </div>
-    </template>
-    <template id="alert-fail">
-      <div class="alert alert--error hidden">
+    </div>
+    <div id="alert-fail" class="hidden">
+      <div class="alert alert--error">
         <div class="alert__ellipsis"></div>
         <div class="alert__icon">
           <i class="fa fa-circle-xmark fa-3x"></i>
@@ -386,7 +392,7 @@
           <p class="alert__info">Не удалось загрузить фото</p>
         </div>
       </div>
-    </template>
+    </div>
     <!-- Alert notifications end -->
 
     <!-- Grid post template start -->
