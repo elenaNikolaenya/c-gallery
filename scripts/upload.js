@@ -20,7 +20,9 @@ const alertSuccess = document.querySelector('#alert-success');
 const alertFail = document.querySelector('#alert-fail');
 
 const MAX_CHAR_NUMBER = 2000;
+const TIMEOUT = 2000;
 const URL_POST_PUBLISH = "https://c-gallery.polinashneider.space/api/v1/posts/";
+const TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1ODAyMDYxLCJpYXQiOjE2NzA5NjM2NjEsImp0aSI6IjdkNzQ5MDUxMjZkNjQwZTdiMGNkOTNjMTFkMGUxZGY4IiwidXNlcl9pZCI6MjV9.UtYKamvCmV187J_pov0OYS6cIIDZSJY60gB2K3ncPS0;
 // step 1
 addPhotoBtn.addEventListener('click', openAddPostModal);
 addFirstPostBtn.addEventListener('click', openAddPostModal);
@@ -97,7 +99,7 @@ addPostStep1.addEventListener('drop', (event) => {
     addPostHeader.classList.add('add-post-modal__text--red');
     setTimeout(() => {
       addPostHeader.classList.remove('add-post-modal__text--red');
-    }, 2000)
+    }, TIMEOUT)
   }  
 });
 
@@ -235,7 +237,7 @@ function submitData() {
     body: data,
     headers: {
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1ODAyMDYxLCJpYXQiOjE2NzA5NjM2NjEsImp0aSI6IjdkNzQ5MDUxMjZkNjQwZTdiMGNkOTNjMTFkMGUxZGY4IiwidXNlcl9pZCI6MjV9.UtYKamvCmV187J_pov0OYS6cIIDZSJY60gB2K3ncPS0",
+        `Bearer ${TOKEN} `,
     },
   })
   .then((response) => {
@@ -246,7 +248,6 @@ function submitData() {
     }    
   })
   .catch((error) => {
-    console.log(error);
     showAlert(alertFail);
   })
   .finally(() => {
@@ -270,5 +271,5 @@ function showAlert(alertToShow) {
   setTimeout(() => {
     alertToShow.classList.add('hidden');
     hideOverlay();
-  }, 2000);
+  }, TIMEOUT);
 }
