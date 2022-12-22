@@ -1,6 +1,18 @@
+import { TOKEN } from "./constants.js";
+import { URL_POST_PUBLISH } from "./constants.js";
+import { TIMEOUT } from "./constants.js";
+
 import { overlay } from "./overlay.js";
 import { showOverlay } from "./overlay.js";
 import { hideOverlay } from "./overlay.js";
+
+import { showLoader } from "./loader.js";
+
+import { getPosts } from "./download.js";
+import { showMainContent } from "./download.js";
+import { resetIndex } from "./download.js";
+import { cleanPhotoContent } from "./download.js";
+import { showMorePhotoBtn } from "./download.js";
 
 const addPhotoBtn = document.querySelector('#add-photo');
 const addFirstPostBtn = document.querySelector('#add-first-post');
@@ -17,20 +29,19 @@ const textCounter = document.querySelector('.text-counter');
 const postHashtagsInput = document.querySelector('#post-hashtags');
 const postPublishBtn = document.querySelector('#post-publish');
 const alertSuccess = document.querySelector('#alert-success');
-const alertFail = document.querySelector('#alert-fail');
+export const alertFail = document.querySelector('#alert-fail');
 
 const MAX_CHAR_NUMBER = 2000;
-const TIMEOUT = 2000;
-const URL_POST_PUBLISH = "https://c-gallery.polinashneider.space/api/v1/posts/";
-const TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1ODAyMDYxLCJpYXQiOjE2NzA5NjM2NjEsImp0aSI6IjdkNzQ5MDUxMjZkNjQwZTdiMGNkOTNjMTFkMGUxZGY4IiwidXNlcl9pZCI6MjV9.UtYKamvCmV187J_pov0OYS6cIIDZSJY60gB2K3ncPS0;
+
 // step 1
 addPhotoBtn.addEventListener('click', openAddPostModal);
 addFirstPostBtn.addEventListener('click', openAddPostModal);
-overlay.addEventListener('click', closeAddPostModal);
+
 
 function openAddPostModal() {
   openModal(addPostModal);
   showOverlay();
+  overlay.addEventListener('click', closeAddPostModal);
 }
 
 function closeAddPostModal() {
@@ -42,13 +53,14 @@ function closeAddPostModal() {
   hideNotification(textCounter, textNotification);
   unhighlightArea(postTextInput);
   enableBtn(postPublishBtn);
+  overlay.removeEventListener('click', closeAddPostModal);
 }
 
-function openModal(modal) {
+export function openModal(modal) {
   modal.classList.add('active');
 }
 
-function closeModal(modal) {
+export function closeModal(modal) {
   modal.classList.remove('active');
 }
 
@@ -189,15 +201,16 @@ function unhighlightArea(input) {
   input.classList.remove('error');
 }
 
-function disableBtn(btn) {
+export function disableBtn(btn) {
   btn.disabled = true;
 }
 
-function enableBtn(btn) {
+export function enableBtn(btn) {
   btn.disabled = false;
 }
+const debouncedValidateHashtags = _.debounce(validateHashtags, 700);
 
-postHashtagsInput.addEventListener('input', validateHashtags);
+postHashtagsInput.addEventListener('input', debouncedValidateHashtags);
 
 function validateHashtags() {
   const hashtags = processPostHashtags();
@@ -227,46 +240,58 @@ function processPostHashtags() {
 
 postPublishBtn.addEventListener('click', submitData);
 
-function submitData() {  
+async function submitData() {  
   clearPreviewURL();
 
   const data = createFormData();
 
-  fetch(URL_POST_PUBLISH, {
-    method: "POST",
-    body: data,
-    headers: {
-      Authorization:
-        `Bearer ${TOKEN} `,
-    },
-  })
-  .then((response) => {
+  try {
+    const response = await fetch(URL_POST_PUBLISH, {
+      method: "POST",
+      body: data,
+      headers: {
+        Authorization:
+          `Bearer ${TOKEN} `,
+      },
+    });
+
     if (response.status === 201) {
-      showAlert(alertSuccess);
-    } else {
-      showAlert(alertFail);
-    }    
-  })
-  .catch((error) => {
-    showAlert(alertFail);
-  })
-  .finally(() => {
+      closeModal(addPostModal);
+      resetSteps();
+      showAlert(alertSuccess, 'Пост добавлен!');
+      showLoader();
+      await getPosts();
+      resetIndex(); 
+      cleanPhotoContent();
+      enableBtn(showMorePhotoBtn);
+      showMainContent();
+    } else {      
+      closeModal(addPostModal);
+      resetSteps();      
+      showAlert(alertFail, `Ошибка ${response.status}`);
+    }      
+  } catch (error) {
+    closeModal(addPostModal);
+    resetSteps();
+    showAlert(alertFail, `${error}`);
+  } finally {
     clearInputs();
-  })
+  }
 }
 
-function createFormData() {
+  function createFormData() {
   let formData = new FormData();
   const postHashtags = processPostHashtags();  
   formData.append('text', postTextInput.value);
   formData.append('image', file);
-  formData.append('tags', postHashtags);
+  if (postHashtagsInput.value) {
+    formData.append('tags', postHashtags);
+  }  
   return formData;  
 }
 
-function showAlert(alertToShow) {
-  closeModal(addPostModal);
-  resetSteps();
+export function showAlert(alertToShow, textInAlert) {
+  alertToShow.querySelector('.alert__title').textContent = textInAlert;  
   alertToShow.classList.remove('hidden');
   setTimeout(() => {
     alertToShow.classList.add('hidden');
