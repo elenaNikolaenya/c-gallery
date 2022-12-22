@@ -50,6 +50,7 @@ function createPreviewPostModal(event, allPostsArr) {
   }
 
   function createHashtags(arr) {
+    postHashtags.innerHTML = '';
     const fragment = new DocumentFragment;
 
     arr.forEach((item) => {
