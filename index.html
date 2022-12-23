@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="style.css" />
     <title>CGallery</title>
   </head>
-  <body class="">
-    <span class="body-overlay"></span>
+  <body class="with-overlay">
+    <span class="body-overlay active"></span>
     <div class="container">
       <header class="header">
         <div class="header__content">
@@ -40,9 +40,14 @@
         </div>
       </header>
       <main class="photos">
+        <div class="loader">
+          <div class="loader__pic">
+            <i class="fa fa-arrow-rotate-right"></i>
+          </div>
+        </div> 
         <div class="photos__info">
           <span class="photos__info-title">Фото</span>
-          <span><span id="photo-count">0</span> публикаций</span>
+          <span id="photo-count">0 публикаций</span> 
         </div>
         <div class="empty-content photos__empty-content hidden">
           <img class="empty-content__placeholder" src="./assets/photos.svg" />
@@ -51,143 +56,11 @@
           <button type="button" id="add-first-post" class="empty-content__button">
             Создать публикацию
           </button>
+        </div>        
+        <div class="photos__content">           
         </div>
-        <div class="photos__content">
-          <div class="post">
-            <img src="./img/post-1.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-2.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-3.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-4.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-5.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-6.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-7.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-8.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="post">
-            <img src="./img/post-9.jpg" alt="" />
-            <div class="overlay">
-              <div class="overlay__content">
-                <div>
-                  <i class="fa fa-heart"></i>
-                  <span>0</span>
-                </div>
-                <div>
-                  <i class="fa fa-comment"></i>
-                  <span>0</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="photos__controls">
+          <button type="button" id="show-more-photo">Показать еще</button>
         </div>
       </main>
       <footer class="footer">© 2022 codegirl_school</footer>
@@ -328,9 +201,11 @@
             профессии, которым приходится иметь дело с кодом 👌.
           </p>
           <p class="post-hashtags">
-            <a href="#">#itaкурсы</a>
-            <a href="#">#сменитьпрофессию</a> <a href="#">#новаяпрофессия</a>
-            <a href="#">#itпрофессии</a> <a href="#">#itпрофессии</a>
+            <!--<a href="#">#itaкурсы</a>
+            <a href="#">#сменитьпрофессию</a>
+            <a href="#">#новаяпрофессия</a>
+            <a href="#">#itпрофессии</a>
+            <a href="#">#itпрофессии</a>-->
           </p>
           <div class="comments">
             <div class="comments__content">
@@ -389,7 +264,7 @@
         </div>
         <div class="alert__text">
           <h4 class="alert__title">Ошибка</h4>
-          <p class="alert__info">Не удалось загрузить фото</p>
+          <p class="alert__info">Не удалось загрузить данные</p>
         </div>
       </div>
     </div>
@@ -414,6 +289,7 @@
       </div>
     </template>
     <!-- Grid post template end -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script type="module" src="scripts/main.js"></script>
   </body>
 </html>
