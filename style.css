@@ -71,10 +71,12 @@ body.with-overlay {
   text-align: center;
 }
 
-.avatar {
+.avatar {  
   width: 173px;
   height: 173px;
   cursor: pointer;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .header__info span {
@@ -395,7 +397,7 @@ textarea.error {
   color: var(--text-light);
 }
 
-.text-counter.error {  
+.text-counter.error, .bio-count.error {  
   color: var(--error);
 }
 
@@ -464,7 +466,7 @@ textarea.error {
   color: var(--error);
 }
 
-.edit-bio-modal .bio-count {
+.bio-count {
   color: var(--text-cream);
 }
 
@@ -478,12 +480,6 @@ textarea.error {
 .edit-bio-modal__button-cancel {
   padding: 10px 18px;
   font-size: 14px;
-}
-
-.edit-bio-modal__button-save--inactive {
-  background-color: var(--disabled);
-  border-color: var(--disabled);
-  pointer-events: none;
 }
 
 .edit-bio-modal__button-cancel,
@@ -556,9 +552,17 @@ textarea.error {
 .comments__item {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px;
   margin-bottom: 12px;
+}
+
+.comments__item-avatar,
+.account-info img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
 }
 
 .comments__item-nickname {

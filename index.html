@@ -21,7 +21,10 @@
     <div class="container">
       <header class="header">
         <div class="header__content">
-          <img class="avatar" id="profile-avatar" src="./assets/avatar.svg" alt="codegirl_school" />
+          <label for="avatar-upload" class="">
+            <img class="avatar" id="profile-avatar" src="./assets/avatar.svg" alt="codegirl_school"/>
+          </label>              
+          <input id="avatar-upload" type="file" accept="image/*">          
           <div class="header__info">
             <h2 id="account-nickname">codegirl_school</h2>
             <span id="account-name">IT-школа для девушек | WEB</span>
@@ -57,11 +60,12 @@
             Создать публикацию
           </button>
         </div>        
-        <div class="photos__content">           
+        <div class="photos__content">
         </div>
         <div class="photos__controls">
           <button type="button" id="show-more-photo">Показать еще</button>
-        </div>
+        </div>           
+        
       </main>
       <footer class="footer">© 2022 codegirl_school</footer>
       <!-- Add post modal start -->
@@ -148,20 +152,17 @@
               <label for="bio">О себе</label>
               <textarea name="bio" id="bio" cols="30" rows="2"></textarea>
               <div class="edit-bio-modal__bio-feedback">
-                <div class="max-capacity v-hidden">
+                <div id="bio-notification" class="max-capacity v-hidden">
                   Максимальное количество символов 150
                 </div>
-                <div class="bio-count"><span>0</span>/150</div>
+                <div class="bio-count">0/150</div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal__footer edit-bio-modal__footer">
           <button
-            id="bio-save"
-            class="edit-bio-modal__button-save edit-bio-modal__button-save--inactive"
-            type="button"
-          >
+            id="bio-save" class="edit-bio-modal__button-save" type="button">
             Сохранить
           </button>
           <button id="bio-discard" class="edit-bio-modal__button-cancel" type="button">
@@ -200,31 +201,10 @@
             разработчиков и верстальщиков. Но на самом деле есть и другие
             профессии, которым приходится иметь дело с кодом 👌.
           </p>
-          <p class="post-hashtags">
-            <!--<a href="#">#itaкурсы</a>
-            <a href="#">#сменитьпрофессию</a>
-            <a href="#">#новаяпрофессия</a>
-            <a href="#">#itпрофессии</a>
-            <a href="#">#itпрофессии</a>-->
+          <p class="post-hashtags">            
           </p>
           <div class="comments">
             <div class="comments__content">
-              <div class="comments__item">
-                <img
-                  class="comments__item-avatar"
-                  src="./assets/sample-avatar.jpg"
-                  width="40"
-                  alt=""
-                />
-                <div class="comments__item-text">
-                  <h3 class="comments__item-nickname">anastas_kvl</h3>
-                  <p class="comments__item-comment">
-                    Думаю, что еще SEO-специалисты пользуются этими языками,
-                    интересный пост!👌
-                  </p>
-                  <span class="comments__item-time">15 октября в 21:40</span>
-                </div>
-              </div>
             </div>
             <div class="comments__add">
               <img src="./assets/avatar-small.svg" alt="" />
@@ -289,6 +269,26 @@
       </div>
     </template>
     <!-- Grid post template end -->
+
+    <!--Comment template start-->
+    <template id="comment-template">
+      <div class="comments__item">
+        <img
+          class="comments__item-avatar"
+          src="./assets/sample-avatar.jpg"
+          alt=""
+        />
+        <div class="comments__item-text">
+          <h3 class="comments__item-nickname">anastas_kvl</h3>
+          <p class="comments__item-comment">
+            Думаю, что еще SEO-специалисты пользуются этими языками,
+            интересный пост!👌
+          </p>
+          <span class="comments__item-time">15 октября в 21:40</span>
+        </div>
+      </div>
+    </template>
+    <!--Comment template end-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script type="module" src="scripts/main.js"></script>
   </body>

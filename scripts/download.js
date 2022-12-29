@@ -2,27 +2,48 @@ import { hideLoader } from "./loader.js";
 import { showLoader } from "./loader.js";
 
 import { TOKEN } from "./constants.js";
-import { URL_POSTS_DOWNLOAD } from "./constants.js";
+import { BASE_URL } from "./constants.js";
 
-import { alertFail } from "./upload.js";
-import { showAlert } from "./upload.js";
+import { showAlert } from "./alerts.js";
 import { disableBtn } from "./upload.js";
+
+import { user } from "./user.js";
+
+import { avatar } from "./avatar.js";
 
 const photoCount = document.querySelector('#photo-count');
 const emptyContent = document.querySelector('.empty-content');
 export const photoContent = document.querySelector('.photos__content');
 const postTemplate = document.querySelector('#post-template');
 export const showMorePhotoBtn = document.querySelector('#show-more-photo');
+const accountNickname = document.querySelector('#account-nickname');
+const accountName = document.querySelector('#account-name');
+const description = document.querySelector('#description');
 
 let lastLoadedPhotoIndex = -1;
 export let posts = null;
 
-//downloading 
+
+//personal data downloading 
+fillBioData();
+
+export function fillBioData() {  
+  const { photo, nickname, name, biography } = user;
+  avatar.src = photo;
+  accountNickname.textContent = nickname;
+  accountName.textContent = name;
+  description.textContent = biography;
+}
+
+//posts downloading 
+
+const urlPostsDownload = BASE_URL + "users/me/posts/?" + new URLSearchParams({ limit: 50 }).toString();
+
 await getPosts();
 
 export async function getPosts() {
   try {
-    const response = await fetch(URL_POSTS_DOWNLOAD + "?" + new URLSearchParams({ limit: 50 }).toString(), {
+    const response = await fetch(urlPostsDownload, {
       method: "GET",
       headers: {
         Authorization:
@@ -32,33 +53,36 @@ export async function getPosts() {
 
     if (response.status === 200) {
       posts = await response.json();
-      posts.reverse();
+      posts = posts.sort((a,b) => b.id - a.id);
     } else {
-      showAlert(alertFail, `Ошибка ${response.status}`);
+      showAlert(false, `Ошибка ${response.status}`, 'Не удалось получить данные');
     }   
   } catch (error) {
-    showAlert(alertFail, `${error}`);
-  }
+    showAlert(false, `${error}`, 'Не удалось получить данные');
+  }  
 }
 
 //displaying of photos (or start position)
 showMainContent();
 
 export function showMainContent() {
-  showPhotoCount(posts);
+  if (posts) {
+    showPhotoCount(posts);
 
-  if (posts.length === 0) {
-    showEmptyContent();
-  } else {
-    createPhotoContent(posts);
-    showPhotoContent();
-  }
+    if (posts.length === 0) {
+      showEmptyContent();
+    } else {
+      createPhotoContent(posts);
+      showPhotoContent();
+    }
+  }  
 }
 
 function showEmptyContent() {
   hideLoader();
   emptyContent.classList.remove('hidden');
   photoContent.classList.add('hidden');
+  showMorePhotoBtn.classList.add('hidden');
 }
 
 function showPhotoCount(postsArr) {
@@ -84,14 +108,12 @@ function showPhotoCount(postsArr) {
 
 function createPhotoContent(postsArr) {
   const fragment = new DocumentFragment();
+  const renderedPhotoNumber = 9;
 
-  for (let i = lastLoadedPhotoIndex + 1; i < lastLoadedPhotoIndex + 10; i++) {
+  for (let i = lastLoadedPhotoIndex + 1; i < lastLoadedPhotoIndex + 1 + renderedPhotoNumber; i++) {
     if (postsArr[i]) {
-      const post = postsArr[i];
-      const image = post.image;
-      const likesNumber = post.likes;
-      const commentsNumber = post.comments.length;
-      const id = post.id;
+      const {image, likes: likesNumber, comments, id} = postsArr[i];      
+      const commentsNumber = comments.length;
       const card = makePostByTemplate(image, likesNumber, commentsNumber, id);
       fragment.append(card);
       if (i === postsArr.length - 1) {
@@ -101,7 +123,7 @@ function createPhotoContent(postsArr) {
       disableBtn(showMorePhotoBtn);
     }        
   }
-  lastLoadedPhotoIndex += 9;  
+  lastLoadedPhotoIndex += renderedPhotoNumber;  
   photoContent.append(fragment);
 }
 
@@ -110,7 +132,7 @@ function makePostByTemplate(image, likesNumber, commentsNumber, id) {
   post.querySelector('img').src = image;
   post.querySelector('.likes span').textContent = likesNumber;
   post.querySelector('.comments span').textContent = commentsNumber;
-  post.querySelector('div.post').setAttribute('id', `${id}`);
+  post.querySelector('div.post').id = id;
   return post;
 }
 
@@ -118,6 +140,7 @@ function showPhotoContent() {
   hideLoader();
   emptyContent.classList.add('hidden');
   photoContent.classList.remove('hidden');
+  showMorePhotoBtn.classList.remove('hidden');
 }
 
 //functions for reloading (when a new post is added)

@@ -1,6 +1,5 @@
 import { TOKEN } from "./constants.js";
-import { URL_POST_PUBLISH } from "./constants.js";
-import { TIMEOUT } from "./constants.js";
+import { BASE_URL } from "./constants.js";
 
 import { overlay } from "./overlay.js";
 import { showOverlay } from "./overlay.js";
@@ -14,6 +13,10 @@ import { resetIndex } from "./download.js";
 import { cleanPhotoContent } from "./download.js";
 import { showMorePhotoBtn } from "./download.js";
 
+import { showAlert } from "./alerts.js";
+
+import { user } from "./user.js";
+
 const addPhotoBtn = document.querySelector('#add-photo');
 const addFirstPostBtn = document.querySelector('#add-first-post');
 const addPostModal = document.querySelector('.add-post-modal');
@@ -22,21 +25,19 @@ const addPostHeader = document.querySelector('.add-post-modal__text');
 const fileUploadInput = document.querySelector('#file-upload');
 const addPostStep2 = document.querySelector('.add-post-modal__step-2');
 const addPostFooter = document.querySelector('.modal__footer');
+const accountInfoBlocks = document.querySelectorAll('.account-info');
 const uploadedPhoto = document.querySelector('#uploaded-photo');
 const postTextInput = document.querySelector('#post-text');
 const textNotification = document.querySelector('#text-notification');
 const textCounter = document.querySelector('.text-counter');
 const postHashtagsInput = document.querySelector('#post-hashtags');
 const postPublishBtn = document.querySelector('#post-publish');
-const alertSuccess = document.querySelector('#alert-success');
-export const alertFail = document.querySelector('#alert-fail');
 
-const MAX_CHAR_NUMBER = 2000;
+const MAX_CHAR_POST = 2000;
 
 // step 1
 addPhotoBtn.addEventListener('click', openAddPostModal);
 addFirstPostBtn.addEventListener('click', openAddPostModal);
-
 
 function openAddPostModal() {
   openModal(addPostModal);
@@ -151,36 +152,47 @@ function prepareInputFileToSend() {
   file = fileUploadInput.files[0];
 }
 // step 2
-function moveToStep2() {  
+function moveToStep2() {
+  displayIcons();
   uploadedPhoto.src = url;
-  countCharacters();
+  countCharacters(postTextInput, textCounter, MAX_CHAR_POST);
   addPostStep1.classList.add('hidden');
   addPostStep2.classList.remove('hidden');
   addPostFooter.classList.remove('hidden');  
 }
 
+export function displayIcons() {
+  accountInfoBlocks.forEach((item) => {
+    const iconPhoto = item.querySelector('img');
+    iconPhoto.src = user.photo;
+    iconPhoto.alt = user.nickname;
+    const iconName = item.querySelector('span');
+    iconName.textContent = user.nickname;
+  })
+}
+
 postTextInput.addEventListener('input', processCharacters);
 
 function processCharacters() {  
-  countCharacters();
-  validatePostLength();
+  countCharacters(postTextInput, textCounter, MAX_CHAR_POST);
+  validateTextLength(postTextInput, MAX_CHAR_POST, textCounter, textNotification, postPublishBtn);
 }
 
-function countCharacters() {
-  let numberOfEnteredChars = postTextInput.value.length;
-  textCounter.textContent = `${numberOfEnteredChars}/${MAX_CHAR_NUMBER}`;
+export function countCharacters(textInput, charactersCounter, maxNum) {
+  let numberOfEnteredChars = textInput.value.length;
+  charactersCounter.textContent = `${numberOfEnteredChars}/${maxNum}`;
 }
 
-function validatePostLength() {
-  if (postTextInput.value.length > MAX_CHAR_NUMBER) {
-    showNotification(textCounter, textNotification);
-    highlightArea(postTextInput);   
-    disableBtn(postPublishBtn); 
+export function validateTextLength(textInput, maxLength, counter, notification, btn) {
+  if (textInput.value.length > maxLength) {
+    showNotification(counter, notification);
+    highlightArea(textInput);   
+    disableBtn(btn); 
     return;
   }
-  hideNotification(textCounter, textNotification);
-  unhighlightArea(postTextInput);
-  enableBtn(postPublishBtn);
+  hideNotification(counter, notification);
+  unhighlightArea(textInput);
+  enableBtn(btn);
 }
 
 function showNotification(counter, notification) {
@@ -208,6 +220,7 @@ export function disableBtn(btn) {
 export function enableBtn(btn) {
   btn.disabled = false;
 }
+
 const debouncedValidateHashtags = _.debounce(validateHashtags, 700);
 
 postHashtagsInput.addEventListener('input', debouncedValidateHashtags);
@@ -244,9 +257,10 @@ async function submitData() {
   clearPreviewURL();
 
   const data = createFormData();
+  const urlPostPublish = BASE_URL + "posts/";
 
   try {
-    const response = await fetch(URL_POST_PUBLISH, {
+    const response = await fetch(urlPostPublish, {
       method: "POST",
       body: data,
       headers: {
@@ -258,28 +272,23 @@ async function submitData() {
     if (response.status === 201) {
       closeModal(addPostModal);
       resetSteps();
-      showAlert(alertSuccess, 'Пост добавлен!');
-      showLoader();
-      await getPosts();
-      resetIndex(); 
-      cleanPhotoContent();
-      enableBtn(showMorePhotoBtn);
-      showMainContent();
+      showAlert(true, 'Пост добавлен!', 'Мы сохранили все данные');
+      renderMainContent();
     } else {      
       closeModal(addPostModal);
       resetSteps();      
-      showAlert(alertFail, `Ошибка ${response.status}`);
+      showAlert(false, `Ошибка ${response.status}`, 'Не удалось загрузить данные');
     }      
   } catch (error) {
     closeModal(addPostModal);
     resetSteps();
-    showAlert(alertFail, `${error}`);
+    showAlert(false, `${error}`, 'Не удалось загрузить данные');
   } finally {
     clearInputs();
   }
 }
 
-  function createFormData() {
+function createFormData() {
   let formData = new FormData();
   const postHashtags = processPostHashtags();  
   formData.append('text', postTextInput.value);
@@ -290,11 +299,11 @@ async function submitData() {
   return formData;  
 }
 
-export function showAlert(alertToShow, textInAlert) {
-  alertToShow.querySelector('.alert__title').textContent = textInAlert;  
-  alertToShow.classList.remove('hidden');
-  setTimeout(() => {
-    alertToShow.classList.add('hidden');
-    hideOverlay();
-  }, TIMEOUT);
+export async function renderMainContent() {
+  showLoader();
+  await getPosts();
+  resetIndex(); 
+  cleanPhotoContent();
+  enableBtn(showMorePhotoBtn);
+  showMainContent();
 }
