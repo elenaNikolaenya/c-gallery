@@ -35,10 +35,20 @@
             </p>
           </div>
           <div class="header__controls">
-            <button type="button" id="add-photo">Добавить публикацию</button>
-            <button type="button" id="edit-bio">
-              <i class="fa fa-pencil"></i>
-            </button>
+            <div class="header__controls editing">
+              <button type="button" id="add-photo">Добавить публикацию</button>
+              <button type="button" id="edit-bio">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <button type="button" id="search">
+                <i class="fa fa-magnifying-glass"></i>
+              </button>
+            </div>
+            <div class="header__controls exit-btn hidden">
+              <button type="button" id="exit">
+                <i class="fa fa-right-from-bracket"></i>
+              </button>
+            </div>            
           </div>
         </div>
       </header>
@@ -171,7 +181,18 @@
         </div>
       </div>
       <!-- Edit bio modal end -->
-
+      <!-- Search users modal start -->
+      <div class="modal search-users-modal">
+        <div class="modal__header search-users-modal__header">
+          Поиск других пользователей
+        </div>
+        <div class="search-users-modal__search-line">
+          <input name="find" id="find" autocomplete="off">
+        </div>
+        <div class="search-users-modal__results">               
+        </div>      
+      </div>
+      <!-- Search users modal end -->
       <!-- Preview post modal start -->
       <div class="modal preview-post-modal">
         <div class="preview-post-modal__header">
@@ -207,7 +228,9 @@
             <div class="comments__content">
             </div>
             <div class="comments__add">
-              <img src="./assets/avatar-small.svg" alt="" />
+              <div class="user-avatar">
+                <img src="./assets/avatar-small.svg" alt="" />
+              </div>              
               <textarea
                 rows="1"
                 name="post-comment"
@@ -249,7 +272,22 @@
       </div>
     </div>
     <!-- Alert notifications end -->
-
+    <!-- Confirm notification start -->
+    <div id="confirm" class="confirm hidden">
+      <div class="confirm__text">
+        <h4 class="confirm__title">Вы уверены, что хотите выйти?</h4>
+        <p class="confirm__info">Информация НЕ будет сохранена!</p>
+      </div>
+      <div class="confirm__controls">
+        <button id="stay" class="confirm__button-stay" type="button">
+          Остаться
+        </button>
+        <button id="leave" class="confirm__button-leave" type="button">
+          Выйти
+        </button>
+      </div>      
+    </div>    
+    <!-- Confirm notification end -->
     <!-- Grid post template start -->
     <template id="post-template">
       <div class="post">
@@ -269,10 +307,9 @@
       </div>
     </template>
     <!-- Grid post template end -->
-
     <!--Comment template start-->
     <template id="comment-template">
-      <div class="comments__item">
+      <div class="comments__item" id="">
         <img
           class="comments__item-avatar"
           src="./assets/sample-avatar.jpg"
@@ -284,11 +321,22 @@
             Думаю, что еще SEO-специалисты пользуются этими языками,
             интересный пост!👌
           </p>
-          <span class="comments__item-time">15 октября в 21:40</span>
+          <div class="comments__footer">
+            <span class="comments__item-time">15 октября в 21:40</span>
+            <button type="button" id="delete-comment" class="comments__delete-button">Удалить</button>
+          </div>          
         </div>
       </div>
     </template>
     <!--Comment template end-->
+    <!--User template start-->
+    <template id="user-template">
+      <div class="user-info" id="">
+        <img src="./assets/avatar-small.svg" alt="codegirl_school" />
+        <span>codegirl_school</span>
+      </div>      
+    </template>
+    <!--User template end-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script type="module" src="scripts/main.js"></script>
   </body>

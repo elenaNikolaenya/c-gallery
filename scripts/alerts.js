@@ -4,7 +4,8 @@ const alertSuccess = document.querySelector('#alert-success');
 const alertFail = document.querySelector('#alert-fail');
 
 
-export function showAlert(success, mainTextInAlert, textInAlert) {
+export function showAlert(parameters) {
+  const {success, mainTextInAlert, textInAlert} = parameters;
   let alertToShow = null;
   if (success) {
     alertToShow = alertSuccess;

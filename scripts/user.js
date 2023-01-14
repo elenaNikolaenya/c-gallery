@@ -3,21 +3,35 @@ import { BASE_URL } from "./constants.js";
 
 import { showAlert } from "./alerts.js";
 
-export let user = [];
 
+async function getMe() {  
+  const urlMeDownload = `${BASE_URL}users/me/`;
 
-try {
-  user = JSON.parse(localStorage.getItem('currentUser') || '[]');
-} catch (error) {
-  console.log(error);
+  try {
+    const response = await fetch(urlMeDownload, {
+      method: "GET",
+      headers: {
+        Authorization:
+          `Bearer ${TOKEN}`,
+      },
+    });
+
+    if (response.status === 200) {
+      const me = await response.json();
+      return me;     
+    } else {
+      showAlert({success: false, mainTextInAlert: `Ошибка ${response.status}`, textInAlert: 'Не удалось получить данные о пользователе'});
+    }   
+  } catch (error) {
+    showAlert({success: false, mainTextInAlert: `${error}`, textInAlert: 'Не удалось получить данные о пользователе'});
+  }
 }
 
-if (!user.length) {
-  await getUser();
-}
+const me = await getMe()
+export const myId = me.id;
 
-export async function getUser() {  
-  const urlUserDownload = BASE_URL + "users/me/";
+export async function getUser(id) {  
+  const urlUserDownload = `${BASE_URL}users/${id}/`;
 
   try {
     const response = await fetch(urlUserDownload, {
@@ -29,12 +43,12 @@ export async function getUser() {
     });
 
     if (response.status === 200) {
-      user = await response.json();
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      const user = await response.json();
+      return user;     
     } else {
-      showAlert(false, `Ошибка ${response.status}`, 'Не удалось получить данные о пользователе');
+      showAlert({success: false, mainTextInAlert: `Ошибка ${response.status}`, textInAlert: 'Не удалось получить данные о пользователе'});
     }   
   } catch (error) {
-    showAlert(false, `${error}`, 'Не удалось получить данные о пользователе');
+    showAlert({success: false, mainTextInAlert: `${error}`, textInAlert: 'Не удалось получить данные о пользователе'});
   }
 }

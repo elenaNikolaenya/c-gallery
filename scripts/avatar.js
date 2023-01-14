@@ -4,17 +4,19 @@ import { BASE_URL } from "./constants.js";
 import { showAlert } from "./alerts.js";
 
 import { getUser } from "./user.js";
-import { user } from "./user.js";
+import { myId } from "./user.js";
 
 export const avatar = document.querySelector('#profile-avatar');
-const avatarUploadInput = document.querySelector('#avatar-upload');
+export const avatarUploadInput = document.querySelector('#avatar-upload');
 
+//change the avatar/ profile photo
+let user = {};
 
 avatarUploadInput.addEventListener('change', submitAvatar);
 
 async function submitAvatar() {
   const data = createFormData();
-  const urlAvatarPublish = BASE_URL + "users/me/";
+  const urlAvatarPublish = `${BASE_URL}users/me/`;
 
   try {
     const response = await fetch(urlAvatarPublish, {
@@ -27,13 +29,13 @@ async function submitAvatar() {
     });
 
     if (response.status === 200) {
-      await getUser(); 
+      user = await getUser(myId);
       displayAvatar();
     } else {                  
-      showAlert(false, `Ошибка ${response.status}`, 'Не удалось загрузить фото');
+      showAlert({success: false, mainTextInAlert: `Ошибка ${response.status}`, textInAlert: 'Не удалось загрузить фото'});
     }      
   } catch (error) {    
-    showAlert(false, `${error}`, 'Не удалось загрузить фото');
+    showAlert({success: false, mainTextInAlert: `${error}`, textInAlert: 'Не удалось загрузить фото'});
   } finally {
     avatarUploadInput.value = '';
   }
@@ -49,4 +51,4 @@ function createFormData() {
 function displayAvatar() {
   avatar.src = user.photo;
   avatar.alt = user.nickname;
-};
+}
