@@ -8,7 +8,7 @@ import { hideOverlay } from "./overlay.js";
 import { openModal } from "./upload.js";
 import { closeModal } from "./upload.js";
 
-import { openUserProfile } from "./otherProfile.js";
+import { openUserProfile } from "./other-profile.js";
 
 const searchBtn = document.querySelector('#search');
 const searchUsersModal = document.querySelector('.search-users-modal');

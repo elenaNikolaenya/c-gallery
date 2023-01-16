@@ -1,5 +1,3 @@
-import { TOKEN } from "./constants.js";
-
 import { getPosts } from "./download.js";
 import { fillBioData } from "./download.js";
 import { cleanPhotoContent } from "./download.js";
@@ -12,8 +10,6 @@ import { photoContent } from "./download.js";
 import { enableBtn } from "./upload.js";
 import { displayIcons } from "./upload.js";
 import { renderMainContent } from "./upload.js";
-
-import { showAlert } from "./alerts.js";
 
 import { deletePostBtn } from "./preview.js";
 
@@ -66,9 +62,9 @@ export async function openUserProfile(event) {
     showControllers();
     hideExitBtn();
     displayEmptyContent();
+    posts = await getPosts(myId);
     renderMainContent();
     deletePostBtn.classList.remove('hidden');
-    photoContent.removeEventListener('click', displayUserIcons);  
   }  
 }
 
