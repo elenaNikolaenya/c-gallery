@@ -3,6 +3,7 @@ import { hideOverlay } from "./overlay.js";
 
 const loader = document.querySelector('.loader');
 
+
 export function showLoader() {
   loader.classList.remove('hidden');
   showOverlay();

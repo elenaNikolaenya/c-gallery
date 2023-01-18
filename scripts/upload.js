@@ -5,6 +5,10 @@ import { overlay } from "./overlay.js";
 import { showOverlay } from "./overlay.js";
 import { hideOverlay } from "./overlay.js";
 
+import { showConfirmModal } from "./confirm.js";
+import { hideConfirmModal } from "./confirm.js";
+import { leaveBtn } from "./confirm.js";
+
 import { showLoader } from "./loader.js";
 
 import { getPosts } from "./download.js";
@@ -15,7 +19,8 @@ import { showMorePhotoBtn } from "./download.js";
 
 import { showAlert } from "./alerts.js";
 
-import { user } from "./user.js";
+import { getUser } from "./user.js";
+import { myId } from "./user.js";
 
 const addPhotoBtn = document.querySelector('#add-photo');
 const addFirstPostBtn = document.querySelector('#add-first-post');
@@ -35,6 +40,8 @@ const postPublishBtn = document.querySelector('#post-publish');
 
 const MAX_CHAR_POST = 2000;
 
+let user = {};
+
 // step 1
 addPhotoBtn.addEventListener('click', openAddPostModal);
 addFirstPostBtn.addEventListener('click', openAddPostModal);
@@ -42,10 +49,12 @@ addFirstPostBtn.addEventListener('click', openAddPostModal);
 function openAddPostModal() {
   openModal(addPostModal);
   showOverlay();
-  overlay.addEventListener('click', closeAddPostModal);
+  overlay.addEventListener('click', checkAddPostModalDetail);
+  leaveBtn.addEventListener('click', closeAddPostModal);
 }
 
-function closeAddPostModal() {
+export function closeAddPostModal() {
+  hideConfirmModal();
   closeModal(addPostModal);
   hideOverlay();
   clearInputs();
@@ -54,7 +63,8 @@ function closeAddPostModal() {
   hideNotification(textCounter, textNotification);
   unhighlightArea(postTextInput);
   enableBtn(postPublishBtn);
-  overlay.removeEventListener('click', closeAddPostModal);
+  overlay.removeEventListener('click', checkAddPostModalDetail);
+  leaveBtn.removeEventListener('click', closeAddPostModal);
 }
 
 export function openModal(modal) {
@@ -63,6 +73,14 @@ export function openModal(modal) {
 
 export function closeModal(modal) {
   modal.classList.remove('active');
+}
+
+function checkAddPostModalDetail() {
+  if (fileUploadInput.value) {
+    showConfirmModal();
+  } else {
+    closeAddPostModal();
+  }
 }
 
 function clearInputs() {
@@ -138,10 +156,10 @@ function prepareDropedFileToSend(event) {
 //input (button for upload)
 fileUploadInput.addEventListener('change', processFileUploadInput);
 
-function processFileUploadInput() {
+async function processFileUploadInput() {
   createPreviewOnBtn();
   prepareInputFileToSend();
-  moveToStep2();
+  await moveToStep2();
 }
 
 function createPreviewOnBtn() {
@@ -152,8 +170,9 @@ function prepareInputFileToSend() {
   file = fileUploadInput.files[0];
 }
 // step 2
-function moveToStep2() {
-  displayIcons();
+async function moveToStep2() {
+  user = await getUser(myId);
+  displayIcons(user);
   uploadedPhoto.src = url;
   countCharacters(postTextInput, textCounter, MAX_CHAR_POST);
   addPostStep1.classList.add('hidden');
@@ -161,13 +180,15 @@ function moveToStep2() {
   addPostFooter.classList.remove('hidden');  
 }
 
-export function displayIcons() {
+export function displayIcons(userOb) {
   accountInfoBlocks.forEach((item) => {
     const iconPhoto = item.querySelector('img');
-    iconPhoto.src = user.photo;
-    iconPhoto.alt = user.nickname;
+    iconPhoto.src = userOb.photo;
+    iconPhoto.alt = userOb.nickname;
     const iconName = item.querySelector('span');
-    iconName.textContent = user.nickname;
+    if (iconName) {
+      iconName.textContent = userOb.nickname;
+    }    
   })
 }
 
@@ -257,7 +278,7 @@ async function submitData() {
   clearPreviewURL();
 
   const data = createFormData();
-  const urlPostPublish = BASE_URL + "posts/";
+  const urlPostPublish = `${BASE_URL}posts/`;
 
   try {
     const response = await fetch(urlPostPublish, {
@@ -272,17 +293,17 @@ async function submitData() {
     if (response.status === 201) {
       closeModal(addPostModal);
       resetSteps();
-      showAlert(true, 'Пост добавлен!', 'Мы сохранили все данные');
+      showAlert({success: true, mainTextInAlert: 'Пост добавлен!', textInAlert: 'Мы сохранили все данные'});
       renderMainContent();
     } else {      
       closeModal(addPostModal);
       resetSteps();      
-      showAlert(false, `Ошибка ${response.status}`, 'Не удалось загрузить данные');
+      showAlert({success: false, mainTextInAlert: `Ошибка ${response.status}`, textInAlert: 'Не удалось загрузить данные'});
     }      
   } catch (error) {
     closeModal(addPostModal);
     resetSteps();
-    showAlert(false, `${error}`, 'Не удалось загрузить данные');
+    showAlert({success: false, mainTextInAlert: `${error}`, textInAlert: 'Не удалось загрузить данные'});
   } finally {
     clearInputs();
   }
@@ -301,7 +322,6 @@ function createFormData() {
 
 export async function renderMainContent() {
   showLoader();
-  await getPosts();
   resetIndex(); 
   cleanPhotoContent();
   enableBtn(showMorePhotoBtn);

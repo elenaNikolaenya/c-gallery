@@ -5,14 +5,16 @@ import { TOKEN } from "./constants.js";
 import { BASE_URL } from "./constants.js";
 
 import { showAlert } from "./alerts.js";
+
 import { disableBtn } from "./upload.js";
 
-import { user } from "./user.js";
+import { getUser } from "./user.js";
+import { myId } from "./user.js";
 
 import { avatar } from "./avatar.js";
 
 const photoCount = document.querySelector('#photo-count');
-const emptyContent = document.querySelector('.empty-content');
+export const emptyContent = document.querySelector('.empty-content');
 export const photoContent = document.querySelector('.photos__content');
 const postTemplate = document.querySelector('#post-template');
 export const showMorePhotoBtn = document.querySelector('#show-more-photo');
@@ -20,16 +22,19 @@ const accountNickname = document.querySelector('#account-nickname');
 const accountName = document.querySelector('#account-name');
 const description = document.querySelector('#description');
 
-let lastLoadedPhotoIndex = -1;
-export let posts = null;
 
+let lastLoadedPhotoIndex = -1;
+let user = {};
+let posts = [];
 
 //personal data downloading 
-fillBioData();
+user = await getUser(myId);
+fillBioData(user);
 
-export function fillBioData() {  
-  const { photo, nickname, name, biography } = user;
+export function fillBioData(userOb) {  
+  const { id, photo, nickname, name, biography } = userOb;
   avatar.src = photo;
+  avatar.id = id;
   accountNickname.textContent = nickname;
   accountName.textContent = name;
   description.textContent = biography;
@@ -37,11 +42,11 @@ export function fillBioData() {
 
 //posts downloading 
 
-const urlPostsDownload = BASE_URL + "users/me/posts/?" + new URLSearchParams({ limit: 50 }).toString();
+posts = await getPosts(myId);
 
-await getPosts();
+export async function getPosts(id) {
+  const urlPostsDownload = `${BASE_URL}users/${id}/posts/?` + new URLSearchParams({ limit: 100 }).toString();
 
-export async function getPosts() {
   try {
     const response = await fetch(urlPostsDownload, {
       method: "GET",
@@ -53,16 +58,17 @@ export async function getPosts() {
 
     if (response.status === 200) {
       posts = await response.json();
-      posts = posts.sort((a,b) => b.id - a.id);
+      posts.sort((a,b) => b.id - a.id);
+      return posts;
     } else {
-      showAlert(false, `Ошибка ${response.status}`, 'Не удалось получить данные');
+      showAlert({success: false, mainTextInAlert: `Ошибка ${response.status}`, textInAlert: 'Не удалось получить данные'});
     }   
   } catch (error) {
-    showAlert(false, `${error}`, 'Не удалось получить данные');
+    showAlert({success: false, mainTextInAlert: `${error}`, textInAlert: 'Не удалось получить данные'});
   }  
 }
 
-//displaying of photos (or start position)
+//displaying of photos (or the start position)
 showMainContent();
 
 export function showMainContent() {
